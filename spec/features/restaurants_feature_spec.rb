@@ -34,14 +34,29 @@ feature 'restaurants' do
   end
 end
 
-context 'viewing restaurants' do
-  let!(:kfc){ Restaurant.create(name: 'KFC') }
-  scenario 'lets a user view a restaurant' do
-    visit '/restaurants'
-    click_link 'KFC'
-    expect(page).to have_content 'KFC'
-    expect(current_path).to eq "/restaurants/#{kfc.id}"
+  context 'viewing restaurants' do
+    let!(:kfc){ Restaurant.create(name: 'KFC') }
+    scenario 'lets a user view a restaurant' do
+      visit '/restaurants'
+      click_link 'KFC'
+      expect(page).to have_content 'KFC'
+      expect(current_path).to eq "/restaurants/#{kfc.id}"
+    end
   end
-end
+
+  context 'editing restaurants' do
+    before { Restaurant.create name: 'KFC', description: 'Artery clogging', id: 1 }
+    scenario 'let a user edit a restaurant' do
+      visit '/restaurants'
+      click_link 'Edit KFC'
+      fill_in 'Name', with: 'Kentucky Fried Chicken'
+      fill_in 'Description', with: 'Artery clogging'
+      click_button 'Update Restaurant'
+      click_link 'Kentucky Fried Chicken'
+      expect(page).to have_content 'Kentucky Fried Chicken'
+      expect(page).to have_content 'Artery clogging'
+      expect(current_path).to eq '/restaurants/1'
+    end
+  end
 
 end
